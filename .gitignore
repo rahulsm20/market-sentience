@@ -1,0 +1,6 @@
+dist
+.env
+.serverless
+node_modules
+venv
+.vscode
