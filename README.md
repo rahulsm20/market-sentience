@@ -30,7 +30,7 @@ python -m venv venv
 
 - Enter virtual environment
 
-  - in Linux
+  - Bash
     ```
     source venv/bin/activate
     ```
@@ -50,7 +50,7 @@ pip install -r requirements.txt
 ## Setup scraper
 
 ```
-cd scrapers/flipkartScraper
+cd scrapers/amazon_scraper
 ```
 
 - Install modules
@@ -68,9 +68,10 @@ npm i
 - Setup environment variables
 
 ```
-MONGO_URL=mongodb+srv://username:userpass@cluster0.5kaqvs5.mongodb.net/db_name
+MONGO_URL=mongodb+srv://<username>:<userpass>@<cluster>.mongodb.net/<db_name>
 JWT_SECRET= {ANY_SEQUENCE_OF_CHARACTERS}
 NODE_ENV= production
+BRIGHTDATA_WS_ENDPOINT = <BRIGHTDATA_PROXY_ENDPOINT>
 ```
 
 - Run in dev mode
