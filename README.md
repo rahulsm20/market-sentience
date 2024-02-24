@@ -67,11 +67,16 @@ npm i
 
 - Setup environment variables
 
+$ .env
+
 ```
 MONGO_URL=mongodb+srv://<username>:<userpass>@<cluster>.mongodb.net/<db_name>
-JWT_SECRET= {ANY_SEQUENCE_OF_CHARACTERS}
-NODE_ENV= production
-BRIGHTDATA_WS_ENDPOINT = <BRIGHTDATA_PROXY_ENDPOINT>
+```
+
+$ ./public/.env
+
+```
+GEMINI_API_KEY=
 ```
 
 - Run in dev mode
