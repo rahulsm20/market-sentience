@@ -1,11 +1,14 @@
 import streamlit as st
 import requests
 from keras.models import load_model
-from keras.preprocessing.text import Tokenizer
+from keras._tf_keras.keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
 import google.generativeai as genai
 import os 
 import google.auth
+from dotenv import load_dotenv
+
+load_dotenv()
 
 credentials, project = google.auth.default()
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
