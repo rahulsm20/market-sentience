@@ -12,7 +12,7 @@ async function handleCookiesPopup(page) {
   let browser;
   try {
     browser = await puppeteer.launch({
-      executablePath: "/usr/bin/google-chrome",
+      executablePath: '',
       headless: true,
       defaultViewport: null,
     });

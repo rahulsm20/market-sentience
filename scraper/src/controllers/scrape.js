@@ -12,10 +12,10 @@ async function handleCookiesPopup(page) {
 async function scrapeProducts(req, res) {
   let browser;
   const { company, category } = req.query;
-  console.log("query: ", company, category);
+  // console.log("query: ", company, category);
   try {
     browser = await puppeteer.launch({
-      executablePath: "/usr/bin/google-chrome",
+      executablePath: "",
       headless: false,
       defaultViewport: null,
     });
@@ -24,8 +24,8 @@ async function scrapeProducts(req, res) {
     const searchPhrase = company + " " + category;
     const scrapeToPage = 1;
 
-    console.log("Search phrase:", searchPhrase);
-    console.log("Scrape to page:", scrapeToPage);
+    // console.log("Search phrase:", searchPhrase);
+    // console.log("Scrape to page:", scrapeToPage);
 
     const homeUrl = "https://www.amazon.in/gp/cart/view.html";
     await page.goto(homeUrl);
@@ -48,7 +48,7 @@ async function scrapeProducts(req, res) {
       category = null
     ) => {
       try {
-        console.log("Scraping page " + currentPage + "..." + company);
+        // console.log("Scraping page " + currentPage + "..." + company);
         if (scrapeToPage !== null && currentPage > scrapeToPage) {
           return;
         }
@@ -132,7 +132,7 @@ async function scrapeProducts(req, res) {
               const boughtPastMonth = plusSignRegex.test(plusSignText)
                 ? plusSignText[0]
                 : "N/A";
-              console.log("found product: ", productName);
+              // console.log("found product: ", productName);
               if (productName) {
                 return {
                   cardURL,
@@ -154,7 +154,7 @@ async function scrapeProducts(req, res) {
           return cardInfo;
         });
         for (const card of pageCardData) {
-          console.log("Scraping: ", card.productName, company);
+          // console.log("Scraping: ", card.productName, company);
           if (card.productName.toLowerCase().includes(company.toLowerCase())) {
             await page.goto(card.cardURL);
             try {
@@ -162,9 +162,7 @@ async function scrapeProducts(req, res) {
                 timeout: 5000,
               });
             } catch (error) {
-              console.log(
-                "Element #acrCustomerReviewText not found. Moving to the next card."
-              );
+              console.log("Element #acrCustomerReviewText not found. Moving to the next card.");
               continue;
             }
             await page.waitForSelector("span.a-size-base.a-color-base");
@@ -191,7 +189,7 @@ async function scrapeProducts(req, res) {
             const reviewElements = await page.$$(
               "div[data-hook='review-collapsed']"
             );
-            console.log("reviews: ", reviewElements);
+            // console.log("reviews: ", reviewElements);
             const extractedReviews = [];
             for (const element of reviewElements) {
               const reviewText = await page.evaluate(
@@ -224,19 +222,19 @@ async function scrapeProducts(req, res) {
                 category
               );
             } else {
-              console.log("All available pages scraped:", currentPage);
+              // console.log("All available pages scraped:", currentPage);
             }
           } else if (!scrapeToPage || currentPage < scrapeToPage) {
-            console.log("All available pages scraped:", currentPage);
+            // console.log("All available pages scraped:", currentPage);
           }
         }
       } catch (err) {
-        console.log(err);
+        // console.log(err);
       }
     };
     await scrapePage(url, 1, scrapeToPage, company, category);
 
-    console.log("Scraping finished.");
+    // console.log("Scraping finished.");
 
     const outputFilename = "scrapedData.json";
     for (const product of cardData) {
@@ -244,14 +242,14 @@ async function scrapeProducts(req, res) {
         const newProduct = new Product(product);
         await newProduct.save();
       } catch (err) {
-        console.log(err);
+        // console.log(err);
       }
     }
     fs.writeFileSync(outputFilename, JSON.stringify(cardData, null, 2), "utf8");
-    console.log(`Data saved to ${outputFilename}`);
+    // console.log(`Data saved to ${outputFilename}`);
     return res.status(200).json(cardData);
   } catch (err) {
-    console.log(err);
+    // console.log(err);
   } finally {
     if (browser) {
       await browser.close();
