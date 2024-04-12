@@ -8,7 +8,6 @@ A sentiment analysis project driven by real time data collection and a combinati
 
 - [Prerequisites](#prerequisites)
 - [Setup](#setup)
-- [More details about scraper](https://github.com/rahulsm20/flipkart-scraper-api)
 
 ## Prerequisites
 
@@ -37,8 +36,7 @@ python -m venv venv
   - Powershell
 
     ```
-    cd venv\Scripts
-    .\Activate.ps1
+    .\venv\Scripts\activate
     ```
 
 - Install requirements
@@ -50,20 +48,20 @@ pip install -r requirements.txt
 ## Setup scraper
 
 ```
-cd scrapers/amazon_scraper
+cd scraper
 ```
 
 - Install modules
 
-```
-npm install
-```
+  ```
+  npm install
+  ```
 
-or
+  or
 
-```
-npm i
-```
+  ```
+  npm i
+  ```
 
 - Setup environment variables
 
