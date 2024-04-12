@@ -1,18 +1,19 @@
 import streamlit as st
 import requests
 from keras.models import load_model
-from keras._tf_keras.keras.preprocessing.text import Tokenizer
+from keras.preprocessing.text import Tokenizer
 from keras.preprocessing.sequence import pad_sequences
 import google.generativeai as genai
 import os 
-import google.auth
 from dotenv import load_dotenv
-
+from transformers import BloomForCausalLM
+from transformers import BloomTokenizerFast
+import torch
 load_dotenv()
 
-credentials, project = google.auth.default()
+
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
-genai.configure(api_key=GEMINI_API_KEY,credentials=credentials)
+genai.configure(api_key=GEMINI_API_KEY)
 gemini_model = genai.GenerativeModel('gemini-pro')
 
 model = load_model('../analysis/sentiment_analysis_model.h5')
@@ -37,6 +38,9 @@ def main():
                     if "reviews" in item.keys():
                         reviews.append(item["reviews"])
                         products.append(item["productName"])
+                reviews = [" ".join(item) for item in reviews]
+                joined_reviews = "/".join(reviews)
+                
                 tokenizer = Tokenizer()
                 tokenizer.fit_on_texts(reviews)
                 
@@ -49,17 +53,19 @@ def main():
                 sentiments = ["Positive" if pred >= 0.8 else "Mediocre" if pred>=0.5 else "Negative" for pred in predictions]
                 
 
-                reviews = [" ".join(item) for item in reviews]
-                joined_reviews = "/".join(reviews)
+                llm = LLM('gemini-pro')
+                response = llm.generate_text("Generate marketing strategies based on the reviews for a given line of products of company: " +company+ "and category: " + category +" reviews: "+joined_reviews)
+                st.write(response)
+
+                # bloom = BloomForCausalLM.from_pretrained("bigscience/bloom-1b3")
+                # tokenizer = BloomTokenizerFast.from_pretrained("bigscience/bloom-1b3")
+
+                # prompt ={ f"Generate marketing strategies based on the reviews for a given line of products of company: {company} , category: {category}, reviews: {joined_reviews}"}
+                # result_length = 3000
+                # inputs = tokenizer(prompt, return_tensors="pt")
+
+                # st.write(tokenizer.decode(bloom.generate(inputs["input_ids"],max_length=result_length, do_sample=True, top_k=50, top_p=0.9)[0]))
                 
-                response = gemini_model.generate_content("Generate marketing strategies based on the reviews for a given line of products of company: " +company+ "and category: " + category +" reviews: "+joined_reviews)
-                
-                print(response.text)
-                
-                for i, item in enumerate(reviews):
-                    st.write(f"Review {i+1} for {products[i]}: {item}")
-                    st.write(f"Predicted Sentiment: {sentiments[i]}")
-                    st.write("--------------------")
             else:
                 st.warning("Failed to fetch data from the server.")
         else:
@@ -67,3 +73,12 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+class LLM():
+    def __init__(self, model_name):
+        self.model = genai.GenerativeModel(model_name)
+    
+    def generate_text(self, text):
+        response = self.model.generate_content(text)
+        return response.text
