@@ -16,16 +16,13 @@ async function scrapeProducts(req, res) {
   try {
     browser = await puppeteer.launch({
       executablePath: "",
-      headless: false,
+      headless: true,
       defaultViewport: null,
     });
     const page = await browser.newPage();
 
     const searchPhrase = company + " " + category;
     const scrapeToPage = 1;
-
-    // console.log("Search phrase:", searchPhrase);
-    // console.log("Scrape to page:", scrapeToPage);
 
     const homeUrl = "https://www.amazon.in/gp/cart/view.html";
     await page.goto(homeUrl);
@@ -229,7 +226,7 @@ async function scrapeProducts(req, res) {
           }
         }
       } catch (err) {
-        // console.log(err);
+        console.log(err);
       }
     };
     await scrapePage(url, 1, scrapeToPage, company, category);
@@ -249,7 +246,7 @@ async function scrapeProducts(req, res) {
     // console.log(`Data saved to ${outputFilename}`);
     return res.status(200).json(cardData);
   } catch (err) {
-    // console.log(err);
+    console.log(err);
   } finally {
     if (browser) {
       await browser.close();

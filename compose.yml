@@ -1,0 +1,26 @@
+version: "3"
+
+services:
+  sentiment-client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    image: client:latest
+    environment:
+      - VITE_CLIENT_URL=http://localhost:3000
+    ports:
+      - 3000:3000
+  generation-service:
+    build:
+      context: ./generation-service
+      dockerfile: Dockerfile
+    image: generation-service:latest
+    ports:
+      - 8000:8000
+  scraping-service:
+    build:
+      context: ./scraping-service
+      dockerfile: Dockerfile
+    image: scraping-service:latest
+    ports:
+      - 5000:5000
