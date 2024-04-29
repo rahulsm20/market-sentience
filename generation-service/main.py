@@ -38,7 +38,7 @@ async def read_root():
 
 @app.post("/strategies")   
 async def generate_strategies(request: Request):
-    model = load_model('../../analysis/sentiment_analysis_model.h5')
+    model = load_model('../analysis/sentiment_analysis_model.h5')
     body = await request.json()
     company = body["company"]
     category = body["category"]

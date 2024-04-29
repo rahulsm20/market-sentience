@@ -17,13 +17,6 @@ try {
     .connect(process.env.MONGO_URL)
     .then(() => console.log("connected to mongodb"))
     .catch((err) => console.log(err));
-  // pool.connect((err) => {
-  //   if (err) {
-  //     console.error("Failed to connect to PostgreSQL server", err);
-  //   } else {
-  //     console.log("Connected to PostgreSQL server");
-  //   }
-  // });
 } catch (err) {
   console.log(err);
 }
