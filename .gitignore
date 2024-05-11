@@ -7,5 +7,3 @@ venv
 env
 *.csv
 __pycache__
-linux-venv
-.pytest_cache

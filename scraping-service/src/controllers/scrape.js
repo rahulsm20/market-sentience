@@ -16,7 +16,7 @@ async function scrapeProducts(req, res) {
   try {
     browser = await puppeteer.launch({
       executablePath: "",
-      headless: true,
+      headless: false,
       defaultViewport: null,
     });
     const page = await browser.newPage();

@@ -35,7 +35,7 @@ const Body = () => {
     "Television",
     "Refridgerators",
     "Laptops",
-    "Smartwatches",
+    "Headphones",
   ];
   const [loading, setLoading] = useState(false);
   const [showStopwatch, setShowStopwatch] = useState(false);
