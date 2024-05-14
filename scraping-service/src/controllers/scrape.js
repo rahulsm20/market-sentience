@@ -14,15 +14,15 @@ async function scrapeProducts(req, res) {
   const { company, category } = req.query;
   // console.log("query: ", company, category);
   try {
-    // browser = await puppeteer.launch({
-    //   executablePath: "",
-    //   headless: false,
-    //   defaultViewport: null,
-    // });
     browser = await puppeteer.launch({
-      executablePath: process.env.CHROME_BIN || '/usr/bin/chromium-browser',
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
-  });
+      executablePath: "",
+      headless: false,
+      defaultViewport: null,
+    });
+  //   browser = await puppeteer.launch({
+  //     executablePath: process.env.CHROME_BIN || '/usr/bin/chromium-browser',
+  //     args: ['--no-sandbox', '--disable-setuid-sandbox']
+  // });
     const page = await browser.newPage();
 
     const searchPhrase = company + " " + category;
@@ -246,7 +246,7 @@ async function scrapeProducts(req, res) {
         // console.log(err);
       }
     }
-    fs.writeFileSync(outputFilename, JSON.stringify(cardData, null, 2), "utf8");
+    // fs.writeFileSync(outputFilename, JSON.stringify(cardData, null, 2), "utf8");
     // console.log(`Data saved to ${outputFilename}`);
     return res.status(200).json(cardData);
   } catch (err) {

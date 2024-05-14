@@ -24,6 +24,6 @@ export const generateStrategies = async (company:string,category:string) => {
   // const stringifiedData = JSON.stringify(productData.slice(0, 5));
   const formattedData = {productData, company, category};
  const {data:strategyData}  = await axios.post(`${import.meta.env.VITE_GENERATION_SERVICE_URL}/strategies`, formattedData);
-  localStorage.setItem(`strategies?${company}&category=${category}`, JSON.stringify(data));
+  localStorage.setItem(`strategies?${company}&category=${category}`, JSON.stringify(strategyData));
   return {data:strategyData, productData};
 };
