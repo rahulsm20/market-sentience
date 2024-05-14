@@ -14,11 +14,15 @@ async function scrapeProducts(req, res) {
   const { company, category } = req.query;
   // console.log("query: ", company, category);
   try {
+    // browser = await puppeteer.launch({
+    //   executablePath: "",
+    //   headless: false,
+    //   defaultViewport: null,
+    // });
     browser = await puppeteer.launch({
-      executablePath: "",
-      headless: false,
-      defaultViewport: null,
-    });
+      executablePath: process.env.CHROME_BIN || '/usr/bin/chromium-browser',
+      args: ['--no-sandbox', '--disable-setuid-sandbox']
+  });
     const page = await browser.newPage();
 
     const searchPhrase = company + " " + category;
