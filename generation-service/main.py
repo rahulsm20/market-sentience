@@ -34,7 +34,7 @@ app.add_middleware(
 
 @app.get("/")
 async def read_root():
-    return {"Hello": "World"}
+    return {"message": "Generation Service is up and running!"}
 
 @app.post("/strategies")   
 async def generate_strategies(request: Request):

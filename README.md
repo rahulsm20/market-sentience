@@ -46,10 +46,12 @@ python -m venv venv
 pip install -r requirements.txt
 ```
 
-## Setup scraper
+## Setup
+
+#### Scraping Service
 
 ```
-cd scraper
+cd scraping-service
 ```
 
 - Install modules
@@ -66,25 +68,58 @@ cd scraper
 
 - Setup environment variables
 
-$ .env
+  $ scraping-service/.env
 
-```
-MONGO_URL=mongodb+srv://<username>:<userpass>@<cluster>.mongodb.net/<db_name>
-```
+  ```
+  MONGO_URL=
+  API_KEY=
+  POSTGRES_URL=
+  ```
 
-$ ./public/.env
+
+* Starting the servers  
+  $ scraping-service
+  ```
+  npm run dev
+  ```
+
+#### Generation Service 
+```
+cd generation-service
+```
+- Install Packages  
+
+  ```
+  pip -r requirements.txt
+  ```
+
+$ generation-service/.env
 
 ```
 GEMINI_API_KEY=
 ```
-
-- Run in dev mode
-
+$ generation-service
 ```
-npm run dev
+uvicorn main:app --host 0.0.0.0 --port 8000
 ```
-
---> runs on : 5000
-
+#### Setup Client
+- Setup environment variables
+  ```
+  VITE_AUTH0_CLIENT_ID=
+  VITE_AUTH0_DOMAIN=
+  VITE_SCRAPING_SERVICE_URL=http://localhost:5000
+  VITE_GENERATION_SERVICE_URL=http://localhost:8000
+  VITE_CLIENT_URL= http://localhost:5173/
+  VITE_SERVER_URL=http://localhost:5000
+  ```
+  $ client
+  ```
+  npm i && npm run dev
+  ```
+### Using Docker
+$ .
+```
+docker compose up
+```
 ### System Design
 ![system](https://github.com/rahulsm20/marketing-sentiment-analysis/assets/77540672/06703c25-fc15-4b79-aa33-c4e5964ca174)
