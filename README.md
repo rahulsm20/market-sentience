@@ -8,6 +8,7 @@ A sentiment analysis project driven by real time data collection and a combinati
 
 - [Prerequisites](#prerequisites)
 - [Setup](#setup)
+- [System Design](#system-design)
 
 ## Prerequisites
 
@@ -84,3 +85,6 @@ npm run dev
 ```
 
 --> runs on : 5000
+
+### System Design
+![system](https://github.com/rahulsm20/marketing-sentiment-analysis/assets/77540672/06703c25-fc15-4b79-aa33-c4e5964ca174)
