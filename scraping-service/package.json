@@ -7,7 +7,7 @@
     "test": "jest --watchAll --verbose",
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
-    "build":"node build.js"
+    "build": "node build.js"
   },
   "keywords": [],
   "author": "",
@@ -16,6 +16,7 @@
     "@google/generative-ai": "^0.8.0",
     "@tensorflow/tfjs": "^4.18.0",
     "@tensorflow/tfjs-node": "^4.18.0",
+    "amqplib": "^0.10.8",
     "cheerio": "^1.0.0-rc.12",
     "cors": "^2.8.5",
     "dotenv": "^16.4.1",

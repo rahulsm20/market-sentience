@@ -14,6 +14,7 @@ const ProductSchema = new mongoose.Schema(
     ratingsNumber: { type: String },
     boughtPastMonth: { type: String },
     reviews: [{ type: String }],
+    query: { type: String },
   },
   { timestamps: true }
 );

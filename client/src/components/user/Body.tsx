@@ -1,6 +1,8 @@
-import { LoaderIcon } from "lucide-react";
+import { generateStrategies } from "@/api";
+import { Loader2, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import Markdown from "react-markdown";
 import { Button } from "../ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel } from "../ui/form";
 import { Input } from "../ui/input";
@@ -11,9 +13,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { generateStrategies } from "@/api";
-import Markdown from "react-markdown";
 import Analytics from "./Analytics";
+import Layout from "./Layout";
 
 const Stopwatch = () => {
   const [seconds, setSeconds] = useState(0);
@@ -42,13 +43,14 @@ const Body = () => {
   const [strategies, setStrategies] = useState("");
   const [productData, setProductData] = useState([]);
   const [sentiments, setSentiments] = useState([]);
+
   const onSubmit: SubmitHandler<FieldValues> = async (data) => {
     setLoading(true);
     setShowStopwatch(true);
     try {
       const res = await generateStrategies(data.company, data.category);
-      console.log(res, data);
       const { data: result, productData } = res;
+      console.log(res);
       setStrategies(result?.response);
       setProductData(productData);
       setSentiments(result?.sentiments);
@@ -62,14 +64,19 @@ const Body = () => {
   };
 
   return (
-    <div className="flex flex-col gap-5">
-      <h1 className="text-2xl">
-        Sentiment Analysis and Marketing Strategy Generation Using Large
-        Language Model
-      </h1>
+    <Layout className="flex flex-col gap-5">
+      <div className="flex flex-col gap-2">
+        <h1 className="text-2xl flex items-center gap-2">
+          <Search className="inline" />
+          <span>Product Search</span>
+        </h1>
+        <p className="text-sm text-muted-foreground">
+          Search for a product to get the best strategies to sell it.
+        </p>
+      </div>
       <Form {...form}>
         <form
-          className="w-full flex flex-col gap-5"
+          className="w-full md:w-1/2 flex flex-col gap-5"
           onSubmit={form.handleSubmit(onSubmit)}
         >
           <FormLabel>Company</FormLabel>
@@ -106,19 +113,21 @@ const Body = () => {
           <Button type="submit">Submit</Button>
         </form>
       </Form>
-      <div className="flex gap-2">
-        {loading && <LoaderIcon className="animate-spin" />}
+      <div className="flex flex-col gap-2 w-full lg:w-2/3 overflow-x-clip">
+        {loading && <Loader2 className="animate-spin" />}
         {showStopwatch && <Stopwatch />}
-        <div className="flex flex-col">
+        <div className="flex flex-col flex-wrap gap-5 w-full">
           {productData && sentiments && strategies && !loading && (
             <Analytics sentiments={sentiments} productData={productData} />
           )}
           {strategies && !loading && (
-            <Markdown className="flex flex-col gap-5">{strategies}</Markdown>
+            <Markdown className="flex flex-col gap-5 w-full">
+              {strategies}
+            </Markdown>
           )}
         </div>
       </div>
-    </div>
+    </Layout>
   );
 };
 

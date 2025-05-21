@@ -22,8 +22,15 @@ interface AnalyticsProps {
   sentiments: string[];
   productData: Product[];
 }
+
+/**
+ * Analytics component for displaying product data and sentiment analysis.
+ * @param props - The props for the component.
+ * @param props.sentiments - An array of sentiment strings (e.g., "Positive", "Negative").
+ * @param props.productData - An array of product data objects.
+ * @returns The rendered component.
+ */
 const Analytics = ({ sentiments, productData }: AnalyticsProps) => {
-  console.log(productData);
   let productsByPrice = productData.map((product) => {
     return {
       name: product.productName,
@@ -35,6 +42,7 @@ const Analytics = ({ sentiments, productData }: AnalyticsProps) => {
   productsByPrice = productsByPrice.sort((a, b) => b.price - a.price);
 
   let productsByRatingCount = productData.map((product) => {
+    console.log({ name: product.productName });
     return {
       name: product.productName,
       ratingsCount: product.ratingsCount,
@@ -48,8 +56,15 @@ const Analytics = ({ sentiments, productData }: AnalyticsProps) => {
     (product) => product.ratingsCount
   );
 
+  console.log({ productsByRatingCount });
+
   const PriceTooltip = ({ ...props }) => {
-    if (props.active && props.payload && props.payload.length) {
+    if (
+      props.active &&
+      props.payload &&
+      props.payload.length &&
+      props.payload[0].payload.name
+    ) {
       return (
         <div className="custom-tooltip backdrop-blur-xl text-xs p-2 rounded-xl border ">
           <p className="label">{`Price : ${props.payload[0].value}`}</p>
@@ -78,11 +93,11 @@ const Analytics = ({ sentiments, productData }: AnalyticsProps) => {
     return null;
   };
 
-  console.log(productsByPrice);
   function countSentiments(sentiments: string[]) {
     const counts = [
       { name: "Positive", value: 0, fill: "#0088FE" },
-      { name: "Negative", value: 0, fill: "#FF8042" },
+      { name: "Negative", value: 0, fill: "red" },
+      { name: "Mediocre", value: 0, fill: "#FF8042" },
     ];
 
     sentiments.forEach((sentiment) => {
@@ -90,6 +105,8 @@ const Analytics = ({ sentiments, productData }: AnalyticsProps) => {
         counts[0].value++;
       } else if (sentiment === "Negative") {
         counts[1].value++;
+      } else if (sentiment === "Mediocre") {
+        counts[2].value++;
       }
     });
 
@@ -100,12 +117,14 @@ const Analytics = ({ sentiments, productData }: AnalyticsProps) => {
   };
   const sentimentCount = countSentiments(sentiments);
   return (
-    <div>
-      <h1 className=" text-xl">Analytics</h1>
+    <div className="flex flex-col gap-5 w-full">
+      <h1 className="text-2xl underline-offset-8 underline">Analytics</h1>
       <div className="flex flex-col my-5 gap-5">
         <div className="w-full">
-          <span>Products by Price</span>
-          <ResponsiveContainer width="100%" height={250}>
+          <span className="underline-offset-8 underline">
+            Products by Price
+          </span>
+          <ResponsiveContainer width="50%" height={250}>
             <BarChart data={productsByPrice}>
               <Tooltip content={<PriceTooltip />} />
               <Bar dataKey="price" data={productsByPrice} fill="#8884d8" />
@@ -115,9 +134,7 @@ const Analytics = ({ sentiments, productData }: AnalyticsProps) => {
             Most Expensive Product in this query:
             <p>
               Name:
-              {/* <a href={productsByPrice[0]?.cardURL}> */}
               {productsByPrice[0].name}
-              {/* </a> */}
             </p>
             <p>
               Price:{" "}
@@ -130,7 +147,9 @@ const Analytics = ({ sentiments, productData }: AnalyticsProps) => {
         </div>
         <div className="flex w-full">
           <div className="w-full">
-            <span>Composition of Sentiment</span>
+            <span className="underline underline-offset-8">
+              Composition of Sentiment
+            </span>
             <ResponsiveContainer width="100%" height={250}>
               <PieChart width={100} height={50}>
                 <Tooltip cursor={{ stroke: "red", strokeWidth: 2 }} />
@@ -158,24 +177,41 @@ const Analytics = ({ sentiments, productData }: AnalyticsProps) => {
             </ResponsiveContainer>
             <p>
               Composition by Percentage:
-              <p>
-                Positive:{" "}
-                {(sentimentCount[0].value /
-                  (sentimentCount[0].value + sentimentCount[1].value)) *
-                  100}
-                %
+              <p className="flex gap-2">
+                Positive:
+                <span>
+                  {((sentimentCount[0].value || 0) /
+                    (sentimentCount[0].value + sentimentCount[1].value || 1)) *
+                    100}
+                  %
+                </span>
               </p>
-              <p>
-                Negative:{" "}
-                {(sentimentCount[1].value /
-                  (sentimentCount[0].value + sentimentCount[1].value)) *
-                  100}
-                %
+              <p className="flex gap-2">
+                Negative:
+                <span>
+                  {((sentimentCount[1].value || 0) /
+                    (sentimentCount[0].value + sentimentCount[1].value || 1)) *
+                    100}
+                  %
+                </span>
+              </p>
+              <p className="flex gap-2">
+                Mediocre:
+                <span>
+                  {((sentimentCount[2].value || 0) /
+                    (sentimentCount[0].value +
+                      sentimentCount[1].value +
+                      sentimentCount[2].value || 1)) *
+                    100}
+                  %
+                </span>
               </p>
             </p>
           </div>
-          <div className="w-full">
-            <span>Products by Rating Count</span>
+          <div className="w-full lg:mt-0">
+            <span className="underline-offset-8 underline">
+              Products by Rating Count
+            </span>
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={productsByRatingCount}>
                 <Tooltip content={<RatingsTooltip />} />
@@ -188,11 +224,18 @@ const Analytics = ({ sentiments, productData }: AnalyticsProps) => {
             </ResponsiveContainer>
             <p>
               Product with most ratings in this query:
-              <p>Name: {productsByRatingCount[0].name}</p>
+              <p>
+                Name:{" "}
+                {productsByRatingCount.length > 0
+                  ? productsByRatingCount?.[0].name
+                  : "N/A"}
+              </p>
               <p>
                 Ratings Count:
                 {new Intl.NumberFormat("en-US").format(
-                  productsByRatingCount[0].ratingsCount
+                  productsByRatingCount.length > 0
+                    ? productsByRatingCount?.[0].ratingsCount
+                    : 0
                 )}
               </p>
             </p>

@@ -31,9 +31,11 @@ python -m venv venv
 - Enter virtual environment
 
   - Bash
+
     ```
     source venv/bin/activate
     ```
+
   - Powershell
 
     ```
@@ -76,21 +78,23 @@ cd scraping-service
   POSTGRES_URL=
   ```
 
-
-* Starting the servers  
+- Starting the servers  
   $ scraping-service
+
   ```
   npm run dev
   ```
 
-#### Generation Service 
+#### Generation Service
+
 ```
 cd generation-service
 ```
-- Install Packages  
+
+- Install Packages
 
   ```
-  pip -r requirements.txt
+  pip install -r requirements.txt
   ```
 
 $ generation-service/.env
@@ -98,12 +102,17 @@ $ generation-service/.env
 ```
 GEMINI_API_KEY=
 ```
+
 $ generation-service
+
 ```
 uvicorn main:app --host 0.0.0.0 --port 8000
 ```
+
 #### Setup Client
+
 - Setup environment variables
+
   ```
   VITE_AUTH0_CLIENT_ID=
   VITE_AUTH0_DOMAIN=
@@ -112,14 +121,21 @@ uvicorn main:app --host 0.0.0.0 --port 8000
   VITE_CLIENT_URL= http://localhost:5173/
   VITE_SERVER_URL=http://localhost:5000
   ```
+
   $ client
+
   ```
   npm i && npm run dev
   ```
+
 ### Using Docker
+
 $ .
+
 ```
 docker compose up
 ```
+
 ### System Design
+
 ![system](https://github.com/rahulsm20/marketing-sentiment-analysis/assets/77540672/06703c25-fc15-4b79-aa33-c4e5964ca174)

@@ -7,11 +7,14 @@ import google.generativeai as genai
 import os 
 from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
+import pprint
 
 load_dotenv()
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+PROMPT = os.getenv("PROMPT")
 genai.configure(api_key=GEMINI_API_KEY)
-gemini_model = genai.GenerativeModel('gemini-pro')
+gemini_model = genai.GenerativeModel('gemini-2.0-flash')
+
 
 class LLM():
     def __init__(self, model_name):
@@ -64,17 +67,12 @@ async def generate_strategies(request: Request):
     # pred_avg = [sum(predictions[i])/len(predictions[i]) for i,pred in predictions]
     reviews = [" ".join(item) for item in reviews]
     joined_reviews = "/".join(reviews)
-    llm = LLM('gemini-pro')
-    prompt = f"""Generate targeted marketing strategies for {company} in the {category} category, leveraging insights from customer reviews. 
-    Avoid generic recommendations and focus on addressing specific sentiments and pain points expressed by customers.
-    Consider the following aspects:
-    - Product Features: Identify key features praised by customers and emphasize them in marketing materials.
-    - Customer Satisfaction: Address any recurring issues or concerns raised in negative reviews to improve customer satisfaction.
-    - Competitive Analysis: Analyze competitor reviews to identify areas where your product outperforms competitors and capitalize on those strengths.
-    - Personalized Marketing: Tailor marketing campaigns to specific customer segments based on sentiment analysis of reviews.
-    - Content Creation: Develop engaging content (e.g., blog posts, videos) that resonates with customers' sentiments and interests.
-    Provide actionable strategies that resonate with customers' experiences and drive sales growth."""
+    llm = LLM('gemini-2.0-flash')
+    prompt = PROMPT
+    prompt = prompt.replace("{company}", company)
+    prompt = prompt.replace("{category}", category)
 
-    response = llm.generate_text(prompt + " "
-    +company + category +" reviews: "+joined_reviews)
+    full_prompt = prompt + " " + company + " " + category + " reviews: " + joined_reviews
+    print(full_prompt)
+    response = llm.generate_text(full_prompt)
     return {"sentiments": sentiments, "response": response}

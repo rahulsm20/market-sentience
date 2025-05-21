@@ -1,11 +1,15 @@
+import { clientUrl } from "@/utils/constants";
 import { useAuth0 } from "@auth0/auth0-react";
 import { Button } from "../ui/button";
-import { clientUrl } from "@/utils/constants";
 
 export const LoginButton = () => {
   const { loginWithRedirect } = useAuth0();
 
-  return <Button onClick={() => loginWithRedirect()}>Log In</Button>;
+  return (
+    <Button size="sm" onClick={() => loginWithRedirect()}>
+      Log In
+    </Button>
+  );
 };
 
 export const LogoutButton = () => {
@@ -19,5 +23,9 @@ export const LogoutButton = () => {
       alert(err);
     }
   };
-  return <Button onClick={handleLogout}>Log Out</Button>;
+  return (
+    <Button size="sm" onClick={handleLogout}>
+      Log Out
+    </Button>
+  );
 };

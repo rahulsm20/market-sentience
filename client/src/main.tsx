@@ -1,10 +1,9 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import App from "./App.tsx";
-import "./index.css";
-import { BrowserRouter } from "react-router-dom";
-import { ThemeProvider } from "./components/ui/theme-provider.tsx";
 import { Auth0Provider } from "@auth0/auth0-react";
+import ReactDOM from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
+import App from "./App.tsx";
+import { ThemeProvider } from "./components/ui/theme-provider.tsx";
+import "./index.css";
 import { auth0ClientDomain, auth0ClientID } from "./utils/constants.ts";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
@@ -13,14 +12,16 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
     clientId={auth0ClientID}
     authorizationParams={{
       redirect_uri: import.meta.env.VITE_CLIENT_URL,
+      audience: import.meta.env.VITE_AUTH0_AUDIENCE,
     }}
+    cacheLocation={
+      import.meta.env.VITE_NODE_ENV == "development" ? "localstorage" : "memory"
+    }
   >
-    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
-      <BrowserRouter>
-        <React.StrictMode>
-          <App />
-        </React.StrictMode>
-      </BrowserRouter>
-    </ThemeProvider>
+    <BrowserRouter>
+      <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+        <App />
+      </ThemeProvider>
+    </BrowserRouter>
   </Auth0Provider>
 );
