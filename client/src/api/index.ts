@@ -10,7 +10,7 @@ export const api = axios.create({
 export const generateStrategies = async (company: string, category: string) => {
   let productData, data;
 
-  const { data: schedulerData } = await schedulerApi.addTask(company, category);
+  await schedulerApi.addTask(company, category);
 
   const cachedStrategies = LOCAL_CACHE_KEYS.STRATEGIES(company, category);
 
@@ -33,10 +33,7 @@ export const generateStrategies = async (company: string, category: string) => {
   ) {
     updateHistory(company, category);
 
-    const { data: schedulerData } = await schedulerApi.addTask(
-      company,
-      category
-    );
+    await schedulerApi.addTask(company, category);
 
     const { data } = await api.get(
       `/scrape?company=${company}&category=${category}`

@@ -1,12 +1,11 @@
 import { ArrowUpCircle } from "lucide-react";
-import { useParams } from "react-router-dom";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import ChatMessage from "./ChatMessage";
 import Layout from "./Layout";
 
 const ChatUI = () => {
-  const id = useParams().id;
+  // const id = useParams().id;
   const messages = [
     {
       id: 1,
