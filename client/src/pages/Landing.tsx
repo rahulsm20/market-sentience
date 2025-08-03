@@ -6,16 +6,17 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import Footer from "@/components/user/Footer";
 import Layout from "@/components/user/Layout";
 import Navbar from "@/components/user/Navbar";
 import { useAuth0 } from "@auth0/auth0-react";
 import {
   ArrowRight,
-  Computer,
   GanttChart,
   GanttChartSquare,
   GitBranchPlus,
   LineChart,
+  MessageCircle,
   Smile,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -40,9 +41,10 @@ const Landing = () => {
       icon: <LineChart />,
     },
     {
-      title: "User-Friendly Interface",
-      description: "Navigate easily with our intuitive design.",
-      icon: <Computer />,
+      title: "Comprehensive chat",
+      description:
+        "Engage in meaningful conversations with our AI chatbot to get insights and answers.",
+      icon: <MessageCircle />,
     },
     {
       title: "Customizable Dashboards",
@@ -58,9 +60,9 @@ const Landing = () => {
 
   const navigate = useNavigate();
   return (
-    <div>
+    <div className="hero">
       <Navbar />
-      <Layout className="flex px-20 items-center">
+      <Layout className="flex px-20 items-center mb-20">
         <div className="flex flex-col">
           <h1 className="text-4xl font-bold mb-4">
             <GanttChart className="inline-block mr-2" />
@@ -70,11 +72,11 @@ const Landing = () => {
             The one-stop shop for all your marketing analysis needs.
           </p>
         </div>
-        <section className="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <section className="grid grid-cols-1 md:grid-cols-2 gap-10">
           {features.map((feature, index) => (
             <Card
               key={index}
-              className="p-2 hover:-translate-y-2 duration-300 ease-in-out hover:shadow-md hover:shadow-red-600"
+              className="p-2 hover:-translate-y-2 duration-300 ease-in-out hover:shadow-md hover:shadow-red-600 max-w-72"
             >
               <CardHeader>
                 <CardTitle>{feature.title}</CardTitle>
@@ -94,6 +96,7 @@ const Landing = () => {
           <ArrowRight className="h-4 w-4" />
         </Button>
       </Layout>
+      <Footer />
     </div>
   );
 };

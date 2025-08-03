@@ -10,8 +10,6 @@ export const api = axios.create({
 export const generateStrategies = async (company: string, category: string) => {
   let productData, data;
 
-  await schedulerApi.addTask(company, category);
-
   const cachedStrategies = LOCAL_CACHE_KEYS.STRATEGIES(company, category);
 
   if (localStorage.getItem(cachedStrategies)) {

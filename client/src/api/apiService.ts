@@ -59,4 +59,8 @@ export class ApiService {
     });
     return data;
   }
+  async deleteConversation(id: string) {
+    const { data } = await this.api.delete(`/conversation/${id}`);
+    return data;
+  }
 }

@@ -7,7 +7,7 @@ const Home = () => {
     <div className="flex flex-col h-screen overflow-hidden">
       <Navbar />
       <div className="flex flex-col md:flex-row overflow-hidden">
-        <div className="w-64 shrink-0">
+        <div className="w-52 shrink-0">
           <Sidebar />
         </div>
         <div className="w-full overflow-y-scroll custom-scroll ">

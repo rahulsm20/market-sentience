@@ -1,19 +1,55 @@
+import { schedulerApi } from "@/api/auth0";
 import { Button } from "@/components/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { ConversationItem } from "@/types";
 import { useAuth0 } from "@auth0/auth0-react";
-import { GanttChart, Home, Info, LineChart, SidebarOpen } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import {
+  Ellipsis,
+  GanttChart,
+  Home,
+  Info,
+  LineChart,
+  SidebarOpen,
+  Trash2,
+} from "lucide-react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import { toast } from "sonner";
 import { LoginButton, LogoutButton } from "./ActionButtons";
 import { ModeToggle } from "./ModeToggle";
 
 const Sidebar = () => {
   const [open, setOpen] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+  const [conversations, setConversations] = useState<ConversationItem[]>([]);
+  const id = useParams()?.id;
+  const { isLoading, error } = useQuery({
+    queryKey: [`conversationData`],
+    enabled: !loaded,
+    retry: false,
+    queryFn: () =>
+      schedulerApi.getConversations().then((res) => {
+        setConversations(res);
+        setLoaded(true);
+        return res;
+      }),
+  });
 
-  const items = [
-    { name: "Conversation 1", id: "1" },
-    { name: "Conversation 2", id: "2" },
-  ];
+  if (error) {
+    toast(`Failed to fetch conversations`, {
+      position: "top-center",
+      action: {
+        label: "Dismiss",
+        onClick: () => console.log("Dismiss"),
+      },
+    });
+  }
 
   const { user } = useAuth0();
 
@@ -30,7 +66,7 @@ const Sidebar = () => {
             <div className="flex items-center justify-between p-4 border-b">
               <span className="text-lg font-semibold">Menu</span>
             </div>
-            <ul className="space-y-2 p-4">
+            <ul className="space-y-2 p-4 list-none">
               <div className="flex flex-col items-center justify-between border-b">
                 <ul className="flex justify-end p-3 gap-5">
                   {!user && (
@@ -105,33 +141,79 @@ const Sidebar = () => {
                   </ul>
                 )}
               </div>
-              {items.map(({ name, id }) => (
-                <li key={id}>
-                  <Link
-                    to={`/conversation/${id}`}
-                    className="block px-2 py-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800"
-                    onClick={() => setOpen(false)}
-                  >
-                    {name}
-                  </Link>
+              {isLoading ? (
+                <Ellipsis className="animate-pulse" />
+              ) : conversations.length > 0 ? (
+                conversations.map(({ query, _id }) => (
+                  <li key={_id}>
+                    <Link
+                      to={`/conversation/${_id}`}
+                      className="block px-2 py-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                      onClick={() => setOpen(false)}
+                    >
+                      {query}
+                    </Link>
+                  </li>
+                ))
+              ) : (
+                <li className="text-muted-foreground text-sm">
+                  No conversations found.
                 </li>
-              ))}
+              )}
             </ul>
           </SheetContent>
         </Sheet>
       </div>
 
       {/* Desktop Sidebar */}
-      <div className="hidden md:flex md:flex-col md:w-52 h-full border-r dark:bg-zinc-900 p-4 space-y-2">
-        {items.map(({ name, id }) => (
-          <Link
-            key={id}
-            to={`/conversation/${id}`}
-            className="block px-2 py-1 rounded hover:bg-zinc-100 dark:hover:bg-zinc-800"
-          >
-            {name}
-          </Link>
-        ))}
+      <div className="hidden md:flex md:flex-col md:w-60 h-full border-r p-4 space-y-2 gap-2">
+        <h3 className="dark:text-zinc-300 underline underline-offset-8">
+          Chats
+        </h3>
+        {isLoading ? (
+          <Ellipsis className="animate-pulse" />
+        ) : (
+          <ul className="flex flex-col gap-2">
+            {conversations.length > 0 ? (
+              conversations.map(({ query, _id }) => (
+                <div
+                  className={`flex items-center justify-between text-sm px-2 py-1 rounded ${
+                    _id == id
+                      ? "bg-zinc-100 dark:bg-zinc-800"
+                      : "hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                  }`}
+                >
+                  <Link key={_id} to={`/conversation/${_id}`}>
+                    {query ? query.split("+").join(" ") : "No Query"}
+                  </Link>
+                  <Popover>
+                    <PopoverTrigger onClick={(e) => e.stopPropagation()}>
+                      <Ellipsis className="h-4 w-4" />
+                    </PopoverTrigger>
+                    <PopoverContent className="text-xs w-full">
+                      <ul>
+                        <li className="flex items-center gap-1">
+                          <Button
+                            className="hover:bg-primary bg-transparent"
+                            onClick={() => {
+                              schedulerApi.deleteConversation(_id);
+                            }}
+                          >
+                            Delete <Trash2 className="h-3 w-3" />
+                          </Button>
+                        </li>
+                      </ul>
+                    </PopoverContent>
+                  </Popover>
+                </div>
+              ))
+            ) : (
+              <li className="text-muted-foreground text-sm">
+                No conversations found.
+              </li>
+            )}
+          </ul>
+        )}
       </div>
     </>
   );

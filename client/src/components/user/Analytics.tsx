@@ -12,7 +12,7 @@ import {
 interface Product {
   productName: string;
   price: string;
-  ratingsCount: number;
+  ratingsNumber: number;
   cardURL: string;
   reviews: string[];
   rating: number;
@@ -35,28 +35,28 @@ const Analytics = ({ sentiments, productData }: AnalyticsProps) => {
     return {
       name: product.productName,
       price: parseInt(product.price.split(",").join("")),
-      ratingsCount: product.ratingsCount,
+      ratingsCount: product.ratingsNumber,
       fill: "#0088FE",
     };
   });
   productsByPrice = productsByPrice.sort((a, b) => b.price - a.price);
 
-  let productsByRatingCount = productData.map((product) => {
-    console.log({ name: product.productName });
-    return {
-      name: product.productName,
-      ratingsCount: product.ratingsCount,
-      fill: "#FF8042",
-    };
-  });
-  productsByRatingCount = productsByRatingCount.sort(
-    (a, b) => b.ratingsCount - a.ratingsCount
-  );
-  productsByRatingCount = productsByRatingCount.filter(
-    (product) => product.ratingsCount
-  );
-
-  console.log({ productsByRatingCount });
+  let productsByRatingCount = productData.some(
+    (product) => product.ratingsNumber
+  )
+    ? productData.map((product) => {
+        return {
+          name: product.productName,
+          ratingsCount: product.ratingsNumber,
+          fill: "#FF8042",
+        };
+      })
+    : [];
+  if (productsByRatingCount) {
+    productsByRatingCount = productsByRatingCount.sort(
+      (a, b) => b.ratingsCount - a.ratingsCount
+    );
+  }
 
   const PriceTooltip = ({ ...props }) => {
     if (
@@ -66,11 +66,16 @@ const Analytics = ({ sentiments, productData }: AnalyticsProps) => {
       props.payload[0].payload.name
     ) {
       return (
-        <div className="custom-tooltip backdrop-blur-xl text-xs p-2 rounded-xl border ">
-          <p className="label">{`Price : ${props.payload[0].value}`}</p>
-          <p className="desc">{`Name: ${
-            props.payload[0].payload.name.split("|")[0]
-          }`}</p>
+        <div className="custom-tooltip backdrop-blur-xl text-xs p-2 rounded-xl border max-w-40 gap-3 flex flex-col">
+          <p className="desc">
+            {`${props.payload[0].payload.name.split("|")[0]}`.length > 40
+              ? `${props.payload[0].payload.name.split("|")[0].slice(0, 40)}...`
+              : props.payload[0].payload.name.split("|")[0]}
+          </p>
+          <p className="label">{`${new Intl.NumberFormat("en-US", {
+            style: "currency",
+            currency: "INR",
+          }).format(props.payload[0].value)}`}</p>
         </div>
       );
     }
@@ -78,20 +83,42 @@ const Analytics = ({ sentiments, productData }: AnalyticsProps) => {
     return null;
   };
 
-  const RatingsTooltip = ({ ...props }) => {
-    if (props.active && props.payload && props.payload.length) {
+  const SentimentTooltip = ({ ...props }) => {
+    if (
+      props.active &&
+      props.payload &&
+      props.payload.length &&
+      props.payload[0].payload.name
+    ) {
       return (
-        <div className="custom-tooltip backdrop-blur-xl text-xs p-2 rounded-xl border ">
-          <p className="label">{`No. of Ratings : ${props.payload[0].value}`}</p>
-          <p className="desc">{`Name: ${
-            props.payload[0].payload.name.split("|")[0]
-          }`}</p>
+        <div className="custom-tooltip backdrop-blur-xl text-xs p-2 rounded-xl border max-w-40 gap-3 flex flex-col">
+          <p className="desc">
+            {`${props.payload[0].payload.name.split("|")[0]}`.length > 40
+              ? `${props.payload[0].payload.name.split("|")[0].slice(0, 40)}...`
+              : props.payload[0].payload.name.split("|")[0]}
+          </p>
+          <p className="label">{`${props.payload[0].value}`}</p>
         </div>
       );
     }
 
     return null;
   };
+
+  // const RatingsTooltip = ({ ...props }) => {
+  //   if (props.active && props.payload && props.payload.length) {
+  //     return (
+  //       <div className="custom-tooltip backdrop-blur-xl text-xs p-2 rounded-xl border ">
+  //         <p className="label">{`No. of Ratings : ${props.payload[0].value}`}</p>
+  //         <p className="desc">{`Name: ${
+  //           props.payload[0].payload.name.split("|")[0]
+  //         }`}</p>
+  //       </div>
+  //     );
+  //   }
+
+  //   return null;
+  // };
 
   function countSentiments(sentiments: string[]) {
     const counts = [
@@ -117,42 +144,40 @@ const Analytics = ({ sentiments, productData }: AnalyticsProps) => {
   };
   const sentimentCount = countSentiments(sentiments);
   return (
-    <div className="flex flex-col gap-5 w-full">
+    <div className="flex flex-col gap-3 w-full">
       <h1 className="text-2xl underline-offset-8 underline">Analytics</h1>
-      <div className="flex flex-col my-5 gap-5">
+      <div className="flex flex-col my-5 gap-5 border p-5">
         <div className="w-full">
-          <span className="underline-offset-8 underline">
-            Products by Price
-          </span>
-          <ResponsiveContainer width="50%" height={250}>
+          <span>Products by Price</span>
+          <ResponsiveContainer width="100%" height={250}>
             <BarChart data={productsByPrice}>
               <Tooltip content={<PriceTooltip />} />
               <Bar dataKey="price" data={productsByPrice} fill="#8884d8" />
             </BarChart>
           </ResponsiveContainer>
-          <p>
-            Most Expensive Product in this query:
-            <p>
-              Name:
-              {productsByPrice[0].name}
-            </p>
-            <p>
-              Price:{" "}
-              {new Intl.NumberFormat("en-US", {
-                style: "currency",
-                currency: "INR",
-              }).format(productsByPrice[0].price)}
-            </p>
+          <p className="flex flex-col gap-2">
+            <span>Most Expensive Product in this query</span>
+            <span className="flex gap-2">
+              <span>Name:</span>
+              <span>{productsByPrice[0].name}</span>
+            </span>
+            <span className="flex gap-2">
+              <span>Price:</span>
+              <span>
+                {new Intl.NumberFormat("en-US", {
+                  style: "currency",
+                  currency: "INR",
+                }).format(productsByPrice[0].price)}
+              </span>
+            </span>
           </p>
         </div>
-        <div className="flex w-full">
-          <div className="w-full">
-            <span className="underline underline-offset-8">
-              Composition of Sentiment
-            </span>
+        <div className="flex w-full lg:border-t sm:border-b lg:border-b-0 pt-2 flex-col lg:flex-row gap-2">
+          <div className="w-full border-r">
+            <span>Composition of Sentiment</span>
             <ResponsiveContainer width="100%" height={250}>
               <PieChart width={100} height={50}>
-                <Tooltip cursor={{ stroke: "red", strokeWidth: 2 }} />
+                <Tooltip content={<SentimentTooltip />} />
                 <Legend
                   layout="horizontal"
                   verticalAlign="top"
@@ -176,44 +201,51 @@ const Analytics = ({ sentiments, productData }: AnalyticsProps) => {
               </PieChart>
             </ResponsiveContainer>
             <p>
-              Composition by Percentage:
+              <span>Composition by Percentage</span>
               <p className="flex gap-2">
-                Positive:
+                <span>Positive:</span>
                 <span>
-                  {((sentimentCount[0].value || 0) /
-                    (sentimentCount[0].value + sentimentCount[1].value || 1)) *
-                    100}
+                  {(
+                    ((sentimentCount[0].value || 0) /
+                      (sentimentCount[0].value + sentimentCount[1].value ||
+                        1)) *
+                    100
+                  ).toFixed(2)}
                   %
                 </span>
               </p>
               <p className="flex gap-2">
-                Negative:
+                <span>Negative:</span>
                 <span>
-                  {((sentimentCount[1].value || 0) /
-                    (sentimentCount[0].value + sentimentCount[1].value || 1)) *
-                    100}
+                  {(
+                    ((sentimentCount[1].value || 0) /
+                      (sentimentCount[0].value + sentimentCount[1].value ||
+                        1)) *
+                    100
+                  ).toFixed(2)}
                   %
                 </span>
               </p>
               <p className="flex gap-2">
-                Mediocre:
+                <span>Mediocre:</span>
                 <span>
-                  {((sentimentCount[2].value || 0) /
-                    (sentimentCount[0].value +
-                      sentimentCount[1].value +
-                      sentimentCount[2].value || 1)) *
-                    100}
+                  {(
+                    ((sentimentCount[2].value || 0) /
+                      (sentimentCount[0].value +
+                        sentimentCount[1].value +
+                        sentimentCount[2].value || 1)) *
+                    100
+                  ).toFixed(2)}
                   %
                 </span>
               </p>
             </p>
           </div>
-          <div className="w-full lg:mt-0">
-            <span className="underline-offset-8 underline">
-              Products by Rating Count
-            </span>
+          {/* <div className="w-full lg:mt-0 ml-2">
+            <span>Products by Rating Count</span>
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={productsByRatingCount}>
+                <YAxis domain={["auto", "auto"]} />
                 <Tooltip content={<RatingsTooltip />} />
                 <Bar
                   dataKey="ratingsCount"
@@ -222,24 +254,28 @@ const Analytics = ({ sentiments, productData }: AnalyticsProps) => {
                 />
               </BarChart>
             </ResponsiveContainer>
-            <p>
-              Product with most ratings in this query:
-              <p>
-                Name:{" "}
-                {productsByRatingCount.length > 0
-                  ? productsByRatingCount?.[0].name
-                  : "N/A"}
-              </p>
-              <p>
-                Ratings Count:
-                {new Intl.NumberFormat("en-US").format(
-                  productsByRatingCount.length > 0
-                    ? productsByRatingCount?.[0].ratingsCount
-                    : 0
-                )}
+            <p className="flex flex-col gap-2">
+              <span>Product with most ratings in this query</span>
+              <span className="flex gap-2">
+                <span>Name:</span>
+                <span>
+                  {productsByRatingCount.length > 0
+                    ? productsByRatingCount?.[0].name
+                    : "N/A"}
+                </span>
+              </span>
+              <p className="flex gap-2">
+                <span>Ratings Count:</span>
+                <span>
+                  {new Intl.NumberFormat("en-US").format(
+                    productsByRatingCount.length > 0
+                      ? productsByRatingCount?.[0].ratingsCount
+                      : 0
+                  )}
+                </span>
               </p>
             </p>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
