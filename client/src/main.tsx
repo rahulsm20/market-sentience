@@ -1,4 +1,5 @@
 import { Auth0Provider } from "@auth0/auth0-react";
+import { Analytics as VercelAnalytics } from "@vercel/analytics/react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App.tsx";
@@ -24,6 +25,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <App />
         <Toaster />
+        <VercelAnalytics />
       </ThemeProvider>
     </BrowserRouter>
   </Auth0Provider>

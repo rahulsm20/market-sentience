@@ -88,7 +88,7 @@ const Body = () => {
       </div>
       <Form {...form}>
         <form
-          className="w-full md:w-1/2 flex flex-col gap-5"
+          className="w-full md:w-1/2 lg:w-1/3 flex flex-col gap-5"
           onSubmit={form.handleSubmit(onSubmit)}
         >
           <FormLabel>Company</FormLabel>

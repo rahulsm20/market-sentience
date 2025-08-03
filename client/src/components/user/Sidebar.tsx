@@ -16,12 +16,12 @@ import {
   Info,
   LineChart,
   SidebarOpen,
-  Trash2,
 } from "lucide-react";
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { LoginButton, LogoutButton } from "./ActionButtons";
+import { DeleteDialog } from "./AlertDialog";
 import { ModeToggle } from "./ModeToggle";
 
 const Sidebar = () => {
@@ -193,14 +193,7 @@ const Sidebar = () => {
                     <PopoverContent className="text-xs w-full">
                       <ul>
                         <li className="flex items-center gap-1">
-                          <Button
-                            className="hover:bg-primary bg-transparent"
-                            onClick={() => {
-                              schedulerApi.deleteConversation(_id);
-                            }}
-                          >
-                            Delete <Trash2 className="h-3 w-3" />
-                          </Button>
+                          <DeleteDialog _id={_id} />
                         </li>
                       </ul>
                     </PopoverContent>
