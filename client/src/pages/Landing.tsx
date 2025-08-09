@@ -63,16 +63,25 @@ const Landing = () => {
     <div className="hero">
       <Navbar />
       <Layout className="flex px-20 items-center mb-20">
-        <div className="flex flex-col">
-          <h1 className="text-4xl font-bold mb-4">
-            <GanttChart className="inline-block mr-2" />
-            Market Sentience
-          </h1>
-          <p className="text-lg mb-8">
-            The one-stop shop for all your marketing analysis needs.
-          </p>
+        <div className="flex items-center justify-between flex-col lg:flex-row gap-2 lg:gap-5  lg:w-1/2">
+          <div className="flex flex-col">
+            <h1 className="text-4xl font-bold mb-4">
+              <GanttChart className="inline-block mr-2" />
+              Market Sentience
+            </h1>
+            <p className="text-lg mb-8">
+              The one-stop shop for all your marketing analysis needs.
+            </p>
+          </div>
+          <Button
+            className="flex gap-1"
+            onClick={() => (user ? navigate("/home") : loginWithRedirect())}
+          >
+            <span>Get Started</span>
+            <ArrowRight className="h-4 w-4" />
+          </Button>
         </div>
-        <section className="grid grid-cols-1 md:grid-cols-2 gap-10">
+        <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
           {features.map((feature, index) => (
             <Card
               key={index}
@@ -88,13 +97,6 @@ const Landing = () => {
             </Card>
           ))}
         </section>
-        <Button
-          className="flex gap-1"
-          onClick={() => (user ? navigate("/home") : loginWithRedirect())}
-        >
-          <span>Get Started</span>
-          <ArrowRight className="h-4 w-4" />
-        </Button>
       </Layout>
       <Footer />
     </div>

@@ -35,11 +35,11 @@ const Navbar = () => {
             <GanttChart />
           </Link>
         </li>
-        <li>
-          <Link to="/about" className="flex gap-1 items-center justify-center">
-            <Info />
-          </Link>
-        </li>
+        {/* <li> */}
+        {/*   <Link to="/about" className="flex gap-1 items-center justify-center"> */}
+        {/*     <Info /> */}
+        {/*   </Link> */}
+        {/* </li> */}
       </>
     );
   };
